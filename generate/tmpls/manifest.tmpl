@@ -1,0 +1,33 @@
+package manifest
+
+{{if gt (len .Imports) 0}}
+import (
+{{range filter .Imports 0}}
+    {{if not (eq .ImportAs "")}}{{.ImportAs}} {{end}}"{{.Import}}"{{end}}
+
+{{range filter .Imports 1}}
+    {{if not (eq .ImportAs "")}}{{.ImportAs}} {{end}}"{{.Import}}"{{end}}
+
+{{range filter .Imports 2}}
+    {{if not (eq .ImportAs "")}}{{.ImportAs}} {{end}}"{{.Import}}"{{end}}
+)
+{{end}}
+
+{{range .Aliases}}
+type {{.Name}} = {{.Type}}
+{{end}}
+
+type Config struct {
+{{- range .Configs}}
+    {{.Name}} {{.Type}}{{end}}
+}
+
+type Dependencies struct {
+{{- range .Dependencies}}
+    {{.Name}} {{.Type}}{{end}}
+}
+
+type Manifest struct {
+    Config       Config
+    Dependencies Dependencies
+}

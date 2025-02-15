@@ -1,0 +1,214 @@
+syntax = "proto3";
+
+option go_package = "github.com/magicpantry/infra/gen/proto";
+
+package infra.proto;
+
+enum TriggerEvent {
+  TRIGGER_EVENT_NONE = 0;
+  TRIGGER_EVENT_FIRESTORE_DOCUMENT_DELETED = 1;
+}
+
+message Function {
+  repeated TriggerEvent events = 1;
+  string database = 2;
+  string collection = 3;
+}
+
+message Secret { string value = 1; }
+
+message Cluster {
+  string name = 1;
+  string deployment = 2;
+  string service_name = 3;
+  string service_account = 4;
+  string container = 5;
+  string label = 6;
+  int32 replicas = 7;
+  int32 port = 8;
+}
+
+message Run { bool secure = 1; }
+
+message Target {
+  oneof target {
+    Cluster cluster = 1;
+    Run run = 2;
+  }
+}
+
+message GrpcServer {
+  string definition = 1;
+  bool internal = 2;
+  Target target = 3;
+  repeated Secret secrets = 4;
+}
+
+message Job { string schedule = 1; }
+
+message HttpServer {}
+
+message Auth {
+  string api_key = 1;
+  string messaging_sender_id = 2;
+  string app_id = 3;
+  string measurement_id = 4;
+}
+
+message Endpoints {
+  string path = 1;
+  KeyOrValue domain = 2;
+}
+
+message WebApp { Auth auth = 1; }
+
+message Model {
+  string id = 1;
+  string path = 2;
+}
+
+message ModelServer {
+  Target target = 1;
+  repeated Model models = 2;
+}
+
+message Component {
+  string namespace = 1;
+  string name = 2;
+
+  oneof type {
+    GrpcServer grpc_server = 3;
+    Endpoints endpoints = 4;
+    Function function = 5;
+    WebApp webapp = 6;
+    HttpServer http_server = 7;
+    Job job = 8;
+    ModelServer model_server = 9;
+  }
+}
+
+message ListConfigItem { repeated string values = 1; }
+
+message KeyConfigItem { string path = 1; }
+
+message ConfigItem {
+  string name = 1;
+
+  oneof value {
+    uint32 int_value = 2;
+    ListConfigItem list_value = 3;
+    KeyConfigItem key_value = 4;
+    string string_value = 5;
+    double double_value = 6;
+  }
+}
+
+message Config { repeated ConfigItem items = 1; }
+
+message Docstore { string database = 1; }
+
+message Blockstore {}
+
+message Chrome {}
+
+message GenerativeModel {
+  string id = 1;
+}
+
+message ElasticSignature {
+  string key_type = 1;
+  string filter_type = 2;
+  string sort_type = 3;
+}
+
+message Elastic {
+  repeated string urls = 1;
+  string username_env_key = 2;
+  string password_env_key = 3;
+  string implementation = 4;
+  ElasticSignature signature = 5;
+}
+
+message Pool {
+  string docstore_dependency_name = 1;
+  string collection = 2;
+  string limit_config_name = 3;
+}
+
+message GrpcClientFactory { string definition = 1; }
+
+message KeyOrValue {
+  oneof field {
+    string key = 1;
+    string value = 2;
+  }
+}
+
+message GrpcClient {
+  KeyOrValue domain = 1;
+  string definition = 2;
+  bool secure = 3;
+}
+
+message HttpClient {
+  string definition = 1;
+  string url = 2;
+  string path = 3;
+}
+
+message Database { string name = 1; }
+
+message Ip {}
+
+message Import {
+  string import_as = 1;
+  string import_name = 2;
+}
+
+message ChanType {
+  string name = 1;
+  repeated Import imports = 2;
+}
+
+message Chan {
+  KeyOrValue size = 1;
+  ChanType type = 2;
+}
+
+message Custom { Import import_info = 1; }
+
+message RuntimeDependency {
+  string name = 1;
+
+  oneof value {
+    Docstore docstore = 2;
+    Blockstore blockstore = 3;
+    Elastic elastic = 4;
+    Pool pool = 5;
+    GrpcClientFactory grpc_client_factory = 6;
+    GrpcClient grpc_client = 7;
+    HttpClient http_client = 8;
+    Chrome chrome = 9;
+    Database database = 10;
+    Ip ip = 11;
+    Chan chan = 12;
+    Custom custom = 13;
+    GenerativeModel generative_model = 14;
+  }
+}
+
+message RuntimeDependencies { repeated RuntimeDependency items = 1; }
+
+message BuildDependencies { repeated string items = 1; }
+
+message Manifest {
+  Component component = 1;
+  Config config = 2;
+  RuntimeDependencies runtime_dependencies = 3;
+  BuildDependencies build_dependencies = 4;
+}
+
+message Root {
+  repeated string services = 1;
+  Config config = 2;
+}

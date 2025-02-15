@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+option go_package = "github.com/magicpantry/infra/gen/insights/proto";
+
+package infra.proto;
+
+message TagTextRequest { string text = 1; }
+
+message TagImageRequest { bytes raw = 1; }
+
+message TagTextRequests { repeated TagTextRequest requests = 1; }
+
+message TagImageRequests { repeated TagImageRequest requests = 1; }
+
+message ModelRequest {
+  string model_id = 1;
+
+  oneof requests {
+    TagTextRequests tag_text_requests = 2;
+    TagImageRequests tag_image_requests = 3;
+  }
+}
+
+message TagResponse { repeated double confidences = 1; }
+
+message ModelResponse {
+  string model_id = 1;
+  repeated TagResponse tag_responses = 2;
+}
+
+message ExecuteRequest { repeated ModelRequest requests = 1; }
+
+message ExecuteResponse { repeated ModelResponse responses = 1; }
+
+service ModelService { rpc Execute(ExecuteRequest) returns (ExecuteResponse); }

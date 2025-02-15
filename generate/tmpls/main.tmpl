@@ -1,0 +1,100 @@
+package main
+
+{{if gt (len .Imports) 0}}
+import (
+{{range filter .Imports 0}}
+    {{if not (eq .ImportAs "")}}{{.ImportAs}} {{end}}"{{.Import}}"{{end}}
+
+{{range filter .Imports 1}}
+    {{if not (eq .ImportAs "")}}{{.ImportAs}} {{end}}"{{.Import}}"{{end}}
+
+{{range filter .Imports 2}}
+    {{if not (eq .ImportAs "")}}{{.ImportAs}} {{end}}"{{.Import}}"{{end}}
+)
+{{end}}
+
+{{if .IsGRPC}}
+type {{.ServiceName}} struct {
+    proto.Unimplemented{{.ServiceName}}Server
+
+    Manifest *manifest.Manifest
+}
+{{else}}
+type Handler struct {
+    Manifest *manifest.Manifest
+}
+{{end}}
+
+{{range .ServiceFuncs}}
+func (s *{{$.ServiceName}}) {{.Name}}({{- if eq (len .Args) 2 -}}
+{{(index .Args 0).Name}} {{(index .Args 0).Type}}, {{(index .Args 1).Name}} {{(index .Args 1).Type}}
+{{- else -}}
+{{(index .Args 0).Name}} {{(index .Args 0).Type}}
+{{- end}})
+{{- if eq (len .Rets) 2}} ({{index .Rets 0}}, {{index .Rets 1}})
+{{- else}} {{index .Rets 0 -}}
+{{end}} {
+    {{if eq (len .Args) 1 -}}return handlers.{{.Name}}({{(index .Args 0).Name}}, s.Manifest){{end}}
+    {{- if eq (len .Args) 2}}return handlers.{{.Name}}({{(index .Args 0).Name}}, {{(index .Args 1).Name}}, s.Manifest){{end}}
+}
+{{end}}
+
+{{if and (not .IsGRPC) (not .IsJob)}}
+func (h *Handler) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+        handlers.Handle(rw, r, h.Manifest)
+}
+{{end}}
+
+{{range $index, $element := .Clients}}
+type {{.ServiceName}}Client struct {
+        {{if $element.Secure}}
+        TokenSource oauth2.TokenSource
+        {{end}}
+        Wrapped {{.ImportAs}}.{{.ServiceName}}Client
+}
+
+{{range .ServiceFuncs}}
+func (s *{{$element.ServiceName}}Client) {{.Name}}({{- if eq (len .Args) 3 -}}
+{{(index .Args 0).Name}} {{(index .Args 0).Type}}, {{(index .Args 1).Name}} {{(index .Args 1).Type}}, {{(index .Args 2).Name}} {{(index .Args 2).Type}}
+{{- else -}}
+{{(index .Args 0).Name}} {{(index .Args 0).Type}}, {{(index .Args 1).Name}} {{(index .Args 1).Type}}
+{{- end}})
+{{- if eq (len .Rets) 2}} ({{index .Rets 0}}, {{index .Rets 1}})
+{{- else}} {{index .Rets 0 -}}
+{{end}} {
+    {{- if $element.Secure}}
+    t, err := s.TokenSource.Token()
+    if err != nil {
+        return nil, err
+    }
+    ctx = metadata.AppendToOutgoingContext(ctx, "authorization", "Bearer "+t.AccessToken)
+    {{end}}
+    {{if eq (len .Args) 2 -}}return s.Wrapped.{{.Name}}({{(index .Args 0).Name}}, opts...){{end}}
+    {{- if eq (len .Args) 3}}return s.Wrapped.{{.Name}}({{(index .Args 0).Name}}, {{(index .Args 1).Name}}, opts...){{end}}
+}
+{{end}}
+{{end}}
+
+func main() {
+    gcp.Init()
+
+{{if or .IsGRPC (not .IsJob)}}
+    lis := gcp.Listener()
+    defer lis.Close()
+{{end}}
+
+    mf := &manifest.Manifest{}
+    {{range .InitLines}}
+    {{.}}{{end}}
+
+{{if .IsGRPC}}
+    {{.Custom}}
+    grpc.Serve[proto.{{.ServiceName}}Server](lis, &{{.ServiceName}}{Manifest: mf}, proto.Register{{.ServiceName}}Server)
+{{else if .IsJob}}
+    if err := handlers.Handle(ctx, mf); err != nil {
+        log.Fatal(err)
+    }
+{{else}}
+    http.Serve(lis, &Handler{Manifest: mf})
+{{end}}
+}

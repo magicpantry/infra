@@ -1,0 +1,12 @@
+{
+  "models": [
+    {
+      "name": "test1",
+      "path": "../play/tf/transform-ingredients-to-items-56bb2631-5c24-4be6-a41f-1583632ac6ad.keras"
+    },
+    {
+      "name": "test2",
+      "path": "../play/tf/transform-ingredients-to-items-56bb2631-5c24-4be6-a41f-1583632ac6ad.keras"
+    }
+  ]
+}

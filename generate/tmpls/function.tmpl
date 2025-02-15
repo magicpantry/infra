@@ -1,0 +1,60 @@
+package {{.Repo}}
+
+{{if gt (len .Imports) 0}}
+import (
+{{range filter .Imports 0}}
+    {{if not (eq .ImportAs "")}}{{.ImportAs}} {{end}}"{{.Import}}"{{end}}
+
+{{range filter .Imports 1}}
+    {{if not (eq .ImportAs "")}}{{.ImportAs}} {{end}}"{{.Import}}"{{end}}
+
+{{range filter .Imports 2}}
+    {{if not (eq .ImportAs "")}}{{.ImportAs}} {{end}}"{{.Import}}"{{end}}
+)
+{{end}}
+
+{{range $index, $element := .Clients}}
+type {{.ServiceName}}Client struct {
+        {{if $element.Secure}}
+        TokenSource oauth2.TokenSource
+        {{end}}
+        Wrapped {{.ImportAs}}.{{.ServiceName}}Client
+}
+
+{{range .ServiceFuncs}}
+func (s *{{$element.ServiceName}}Client) {{.Name}}({{- if eq (len .Args) 3 -}}
+{{(index .Args 0).Name}} {{(index .Args 0).Type}}, {{(index .Args 1).Name}} {{(index .Args 1).Type}}, {{(index .Args 2).Name}} {{(index .Args 2).Type}}
+{{- else -}}
+{{(index .Args 0).Name}} {{(index .Args 0).Type}}, {{(index .Args 1).Name}} {{(index .Args 1).Type}}
+{{- end}})
+{{- if eq (len .Rets) 2}} ({{index .Rets 0}}, {{index .Rets 1}})
+{{- else}} {{index .Rets 0 -}}
+{{end}} {
+    {{- if $element.Secure}}
+    t, err := s.TokenSource.Token()
+    if err != nil {
+        return nil, err
+    }
+    ctx = metadata.AppendToOutgoingContext(ctx, "authorization", "Bearer "+t.AccessToken)
+    {{end}}
+    {{if eq (len .Args) 2 -}}return s.Wrapped.{{.Name}}({{(index .Args 0).Name}}, opts...){{end}}
+    {{- if eq (len .Args) 3}}return s.Wrapped.{{.Name}}({{(index .Args 0).Name}}, {{(index .Args 1).Name}}, opts...){{end}}
+}
+{{end}}
+{{end}}
+
+func init() {
+        gcp.Init()
+
+        mf = &manifest.Manifest{}
+        {{range .InitLines}}
+        {{.}}{{end}}
+
+        functions.CloudEvent("{{.Namespace}}-{{.Name}}", Handle_{{.Namespace}}_{{.Name}})
+}
+
+var mf *manifest.Manifest
+
+func Handle_{{.Namespace}}_{{.Name}}(ctx context.Context, event event.Event) error {
+        return handler.Handle(ctx, event, mf)
+}

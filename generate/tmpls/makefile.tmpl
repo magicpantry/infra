@@ -1,0 +1,24 @@
+.PHONY: proto
+
+all: proto
+
+proto: \
+{{- range $i, $target := .Targets}}
+    {{$.Prefix}}/{{$target}}{{if not (isLast $i (len $.Targets))}} \{{end}}
+{{- end}}
+{{range .DirectoryTargets}}
+{{$.Prefix}}/gen/{{.}}:
+{{"\t"}}mkdir -p {{$.Prefix}}/gen/{{.}}
+{{end}}{{range .GoProtoTargets}}
+{{$.Prefix}}/gen/{{.}}/%.pb.go: {{$.Prefix}}/{{.}}/%.proto
+{{"\t"}}protoc -I={{$.Prefix}}/external -I={{$.Prefix}} --go_out={{$.Prefix}}/gen --go-grpc_out={{$.Prefix}}/gen \
+{{"\t"}}{{"\t"}}--go_opt=paths=source_relative --go-grpc_opt=paths=source_relative $<
+{{end}}{{range .PythonProtoTargets}}
+{{$.Prefix}}/gen/{{.}}/%_pb2.py: {{$.Prefix}}/{{.}}/%.proto
+{{"\t"}}python3 -m grpc_tools.protoc -I{{$.Prefix}}/external -I={{$.Prefix}} --python_out={{$.Prefix}}/gen \
+{{"\t"}}{{"\t"}}--pyi_out={{$.Prefix}}/gen --grpc_python_out={{$.Prefix}}/gen $<
+{{"\t"}}sed -i 's/^from .* import/from gen.{{ replace . "/" "." }} import/' {{$.Prefix}}/gen/{{.}}/$*_pb2_grpc.py
+{{end}}{{range .PythonInitTargets}}
+{{$.Prefix}}/gen{{.}}/__init__.py:
+{{"\t"}}touch {{$.Prefix}}/gen{{.}}/__init__.py
+{{end}}
