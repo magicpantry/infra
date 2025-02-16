@@ -14,8 +14,8 @@ import (
 )
 
 func main() {
-    rootDir := shared.RootDir()
-    repo := filepath.Base(rootDir)
+	rootDir := shared.RootDir()
+	repo := filepath.Base(rootDir)
 	for componentDir, manifest := range shared.ReadManifest() {
 		log.Printf("build '%s/%s'\n", manifest.Component.Namespace, manifest.Component.Name)
 		runMain(repo, componentDir, manifest)
@@ -60,7 +60,7 @@ func runMain(repo, componentDir string, mf *proto.Manifest) {
 		apiConfigTemplate,
 		cleaned,
 		mf.Component.Namespace, mf.Component.Name,
-        repo,
+		repo,
 		servicePackage, serviceName,
 		gen_shared.KeyOrValueToString(mf.Component.GetEndpoints().Domain, mf))
 

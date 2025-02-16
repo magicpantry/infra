@@ -39,7 +39,7 @@ import (
 
 func main() {
 	rootDir := infra_shared.RootDir()
-    repo := filepath.Base(rootDir)
+	repo := filepath.Base(rootDir)
 	for componentDir, manifest := range infra_shared.ReadManifest() {
 		log.Printf("gen '%s/%s'\n", manifest.Component.Namespace, manifest.Component.Name)
 		if manifest.Component.GetJob() != nil {
@@ -410,8 +410,8 @@ export type UserInfo = {
 					continue
 				}
 
-				findDefinitions(repo + "."+withoutLast+"."+rpc.InputType, protoFiles, contents)
-				findDefinitions(repo + "."+withoutLast+"."+rpc.OutputType, protoFiles, contents)
+				findDefinitions(repo+"."+withoutLast+"."+rpc.InputType, protoFiles, contents)
+				findDefinitions(repo+"."+withoutLast+"."+rpc.OutputType, protoFiles, contents)
 
 				subjectName := fmt.Sprintf("%sSubject", strings.ToLower(rpc.Name[0:1])+rpc.Name[1:])
 
@@ -1326,7 +1326,7 @@ func genJob(componentDir string, manifest *proto.Manifest, repo string) {
 		log.Fatal(err)
 	}
 	if err := os.WriteFile(paths.GenDir+"/mockmanifest/manifest.go", []byte(mockmanifestfile.Build(paths, manifest, nil,
-    repo)), 0644); err != nil {
+		repo)), 0644); err != nil {
 		log.Fatal(err)
 	}
 
@@ -1529,7 +1529,7 @@ func genHTTPServer(componentDir string, manifest *proto.Manifest, repo string) {
 		log.Fatal(err)
 	}
 	if err := os.WriteFile(paths.GenDir+"/mockmanifest/manifest.go", []byte(mockmanifestfile.Build(paths, manifest, nil,
-    repo)), 0644); err != nil {
+		repo)), 0644); err != nil {
 		log.Fatal(err)
 	}
 

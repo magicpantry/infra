@@ -233,7 +233,7 @@ func BuildImports(paths shared.Paths, grpcServerManifest *proto.GrpcServer, rpcs
 		Import{
 			Import: fmt.Sprintf(
 				"github.com/magicpantry/%s/%s/manifest",
-                repo,
+				repo,
 				shared.MakeRelativeToRoot(paths.GenDir, paths)),
 			ImportType: ImportTypeLocal,
 		})

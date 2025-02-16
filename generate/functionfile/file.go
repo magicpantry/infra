@@ -42,14 +42,14 @@ func Build(paths infra_shared.Paths, mf *proto.Manifest, repo string) string {
 	functionTemplate.Imports = append(functionTemplate.Imports, shared.Import{
 		Import: fmt.Sprintf(
 			"github.com/magicpantry/%s/%s/handler",
-            repo,
+			repo,
 			infra_shared.MakeRelativeToRoot(paths.ComponentDir, paths)),
 		ImportType: shared.ImportTypeLocal,
 	})
 	functionTemplate.Imports = append(functionTemplate.Imports, shared.Import{
 		Import: fmt.Sprintf(
 			"github.com/magicpantry/%s/gen/%s/manifest",
-            repo,
+			repo,
 			infra_shared.MakeRelativeToRoot(paths.ComponentDir, paths)),
 		ImportType: shared.ImportTypeLocal,
 	})

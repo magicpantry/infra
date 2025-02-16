@@ -132,7 +132,7 @@ func Build(paths infra_shared.Paths, mf *proto.Manifest, repo string) string {
 				ImportAs: importAs,
 				Import: fmt.Sprintf(
 					"github.com/magicpantry/%s/gen/%s",
-                    repo,
+					repo,
 					parseImportPath(path)),
 				ImportType: shared.ImportTypeLocal,
 			})
@@ -204,7 +204,7 @@ func Build(paths infra_shared.Paths, mf *proto.Manifest, repo string) string {
 				ImportAs: keyImportAs,
 				Import: fmt.Sprintf(
 					"github.com/magicpantry/%s/gen/%s",
-                    repo,
+					repo,
 					parseImportPath(keyPath)),
 				ImportType: shared.ImportTypeLocal,
 			})
@@ -212,7 +212,7 @@ func Build(paths infra_shared.Paths, mf *proto.Manifest, repo string) string {
 				ImportAs: filterImportAs,
 				Import: fmt.Sprintf(
 					"github.com/magicpantry/%s/gen/%s",
-                    repo,
+					repo,
 					parseImportPath(filterPath)),
 				ImportType: shared.ImportTypeLocal,
 			})
@@ -220,7 +220,7 @@ func Build(paths infra_shared.Paths, mf *proto.Manifest, repo string) string {
 				ImportAs: sortImportAs,
 				Import: fmt.Sprintf(
 					"github.com/magicpantry/%s/gen/%s",
-                    repo,
+					repo,
 					parseImportPath(sortPath)),
 				ImportType: shared.ImportTypeLocal,
 			})

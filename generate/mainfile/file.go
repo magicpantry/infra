@@ -51,14 +51,14 @@ func Build(paths infra_shared.Paths, mf *proto.Manifest, rpcs []shared.RPCInfo, 
 	mainTemplate.Imports = append(mainTemplate.Imports, shared.Import{
 		Import: fmt.Sprintf(
 			"github.com/magicpantry/%s/gen/%s/manifest",
-            repo,
+			repo,
 			infra_shared.MakeRelativeToRoot(paths.ComponentDir, paths)),
 		ImportType: shared.ImportTypeLocal,
 	})
 	mainTemplate.Imports = append(mainTemplate.Imports, shared.Import{
 		Import: fmt.Sprintf(
 			"github.com/magicpantry/%s/%s/handlers",
-            repo,
+			repo,
 			infra_shared.MakeRelativeToRoot(paths.ComponentDir, paths)),
 		ImportType: shared.ImportTypeLocal,
 	})
@@ -422,12 +422,14 @@ func Build(paths infra_shared.Paths, mf *proto.Manifest, rpcs []shared.RPCInfo, 
 				"}")
 		}
 		if dep.GetElastic() != nil {
+			parts := strings.Split(dep.GetElastic().Implementation, ".")
 			mainTemplate.Imports = append(mainTemplate.Imports, shared.Import{
-				Import:     "github.com/magicpantry/infra/shared/textsearch",
+				Import: fmt.Sprintf(
+					"github.com/magicpantry/%s/%s",
+					repo,
+					strings.Join(parts[:len(parts)-1], "/")),
 				ImportType: shared.ImportTypeLocal,
 			})
-
-			parts := strings.Split(dep.GetElastic().Implementation, ".")
 			implementation := parts[len(parts)-1]
 			var wrapped []string
 			for _, u := range dep.GetElastic().Urls {

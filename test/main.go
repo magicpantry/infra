@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/magicpantry/infra/shared"
 	"github.com/magicpantry/infra/gen/proto"
+	"github.com/magicpantry/infra/shared"
 )
 
 func main() {

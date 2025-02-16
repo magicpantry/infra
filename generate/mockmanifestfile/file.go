@@ -232,7 +232,7 @@ func Build(paths infra_shared.Paths, mf *proto.Manifest, rpcs []shared.RPCInfo, 
 					Kind: token.STRING,
 					Value: wrap(fmt.Sprintf(
 						"github.com/magicpantry/%s/gen/%s",
-                        repo,
+						repo,
 						parseImportPath(path))),
 				},
 			})
@@ -612,7 +612,7 @@ func Build(paths infra_shared.Paths, mf *proto.Manifest, rpcs []shared.RPCInfo, 
 					Kind: token.STRING,
 					Value: wrap(fmt.Sprintf(
 						"github.com/magicpantry/%s/gen/%s",
-                        repo,
+						repo,
 						parseImportPath(keyPath))),
 				},
 			})
@@ -622,7 +622,7 @@ func Build(paths infra_shared.Paths, mf *proto.Manifest, rpcs []shared.RPCInfo, 
 					Kind: token.STRING,
 					Value: wrap(fmt.Sprintf(
 						"github.com/magicpantry/%s/gen/%s",
-                        repo,
+						repo,
 						parseImportPath(filterPath))),
 				},
 			})
@@ -632,7 +632,7 @@ func Build(paths infra_shared.Paths, mf *proto.Manifest, rpcs []shared.RPCInfo, 
 					Kind: token.STRING,
 					Value: wrap(fmt.Sprintf(
 						"github.com/magicpantry/%s/gen/%s",
-                        repo,
+						repo,
 						parseImportPath(sortPath))),
 				},
 			})
