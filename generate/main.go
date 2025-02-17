@@ -1356,7 +1356,7 @@ func genJob(componentDir string, manifest *proto.Manifest, repo string) {
 	}()
 
 	infra_shared.Run("cd " + paths.GenDir + "/manifest" + " && go fmt")
-	infra_shared.Run("cd " + paths.GenDir + "/mockmanifest" + " && go fmt")
+	infra_shared.Run("cd " + paths.GenDir + "/mockmanifest" + " && cat manifest.go && go fmt")
 	infra_shared.Run("cd " + paths.GenDir + "/cmd" + " && go fmt")
 }
 
@@ -1559,7 +1559,7 @@ func genHTTPServer(componentDir string, manifest *proto.Manifest, repo string) {
 	}()
 
 	infra_shared.Run("cd " + paths.GenDir + "/manifest" + " && go fmt")
-	infra_shared.Run("cd " + paths.GenDir + "/mockmanifest" + " && go fmt")
+	infra_shared.Run("cd " + paths.GenDir + "/mockmanifest" + " && cat manifest.go && go fmt")
 	infra_shared.Run("cd " + paths.GenDir + "/cmd" + " && go fmt")
 }
 
