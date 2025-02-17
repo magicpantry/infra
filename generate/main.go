@@ -1378,7 +1378,7 @@ func genModelServer(componentDir string, manifest *proto.Manifest) {
 		log.Fatal(err)
 	}
 
-	f, err := os.Open(paths.RootDir + "/infra/gen/tmpls/model_server.py")
+	f, err := os.Open(paths.RootDir + "/infra/generate/tmpls/model_server.py")
 	if err != nil {
 		log.Fatal(err)
 	}
