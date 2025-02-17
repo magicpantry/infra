@@ -1281,7 +1281,7 @@ func genFunction(componentDir string, manifest *proto.Manifest, repo string) {
 	}
 
 	infra_shared.Run("cd " + paths.GenDir + "/manifest" + " && go fmt")
-	infra_shared.Run("cd " + paths.GenDir + "/mockmanifest" + " && go fmt")
+	infra_shared.Run("cd " + paths.GenDir + "/mockmanifest" + " && cat manifest.go && go fmt")
 	infra_shared.Run("cd " + paths.ComponentDir + " && go fmt ./...")
 	infra_shared.Run("cd " + paths.RootDir + " && go fmt")
 }
