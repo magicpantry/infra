@@ -224,6 +224,13 @@ resource "google_cloudbuild_trigger" "prod-%s-%s-trigger" {
 }`
 
 const webAppTemplate = `    step {
+        name = "gcr.io/cloud-builders/git"
+        args:
+        - clone
+        - git@github.com:magicpantry/infra
+    }
+
+    step {
       name = "gcr.io/$PROJECT_ID/build:latest"
       dir = "infra"
       id = "make-infra"
@@ -258,6 +265,13 @@ const webAppTemplate = `    step {
     }`
 
 const jobTemplate = `    step {
+        name = "gcr.io/cloud-builders/git"
+        args:
+        - clone
+        - git@github.com:magicpantry/infra
+    }
+
+    step {
       name = "gcr.io/$PROJECT_ID/build:latest"
       dir = "infra"
       id = "make-infra"
@@ -324,6 +338,13 @@ const jobTemplate = `    step {
     }`
 
 const httpServerTemplate = `    step {
+        name = "gcr.io/cloud-builders/git"
+        args:
+        - clone
+        - git@github.com:magicpantry/infra
+    }
+
+    step {
       name = "gcr.io/$PROJECT_ID/build:latest"
       dir = "infra"
       id = "make-infra"
@@ -389,6 +410,13 @@ const httpServerTemplate = `    step {
     }`
 
 const modelRunTemplate = `    step {
+        name = "gcr.io/cloud-builders/git"
+        args:
+        - clone
+        - git@github.com:magicpantry/infra
+    }
+
+    step {
       name = "gcr.io/$PROJECT_ID/build:latest"
       dir = "infra"
       id = "make-infra"
@@ -445,6 +473,13 @@ const modelRunTemplate = `    step {
     }`
 
 const modelClusterTemplate = `    step {
+        name = "gcr.io/cloud-builders/git"
+        args:
+        - clone
+        - git@github.com:magicpantry/infra
+    }
+
+    step {
       name = "gcr.io/$PROJECT_ID/build:latest"
       dir = "infra"
       id = "make-infra"
@@ -496,6 +531,13 @@ const modelClusterTemplate = `    step {
     }`
 
 const grpcServerClusterTemplate = `    step {
+        name = "gcr.io/cloud-builders/git"
+        args:
+        - clone
+        - git@github.com:magicpantry/infra
+    }
+
+    step {
       name = "gcr.io/$PROJECT_ID/build:latest"
       dir = "infra"
       id = "make-infra"
@@ -561,6 +603,13 @@ const grpcServerClusterTemplate = `    step {
     }`
 
 const grpcServerRunTemplate = `    step {
+        name = "gcr.io/cloud-builders/git"
+        args:
+        - clone
+        - git@github.com:magicpantry/infra
+    }
+
+    step {
       name = "gcr.io/$PROJECT_ID/build:latest"
       dir = "infra"
       id = "make-infra"
@@ -629,6 +678,13 @@ const grpcServerRunTemplate = `    step {
     }`
 
 const functionTemplate = `    step {
+        name = "gcr.io/cloud-builders/git"
+        args:
+        - clone
+        - git@github.com:magicpantry/infra
+    }
+
+    step {
       name = "gcr.io/$PROJECT_ID/build:latest"
       dir = "infra"
       id = "make-infra"
@@ -677,6 +733,13 @@ const functionTemplate = `    step {
     }`
 
 const endpointsTemplate = `    step {
+        name = "gcr.io/cloud-builders/git"
+        args:
+        - clone
+        - git@github.com:magicpantry/infra
+    }
+
+    step {
       name = "gcr.io/$PROJECT_ID/build:latest"
       dir = "infra"
       id = "make-infra"
