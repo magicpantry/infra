@@ -61,7 +61,7 @@ func main() {
 			genWebApp(componentDir, manifest, repo)
 		}
 	}
-	if err := os.WriteFile(rootDir+"/terraform/infra_gen.tf", []byte(terraform.Build(rootDir, infra_shared.ReadAllManifests())), 0644); err != nil {
+	if err := os.WriteFile(rootDir+"/terraform/infra_gen.tf", []byte(terraform.Build(rootDir, infra_shared.ReadAllManifests(), repo)), 0644); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -486,7 +486,7 @@ export class APIService {
 		}
 	}
 
-	byPackage := groupByPackage(contents)
+	byPackage := groupByPackage(contents, repo)
 
 	for packageName, typeFieldsPair := range byPackage {
 		genTypesFile(paths, packageName, typeFieldsPair)
@@ -1067,10 +1067,10 @@ func isEnum(mfs []messageField) bool {
 	return true
 }
 
-func groupByPackage(types map[string][]messageField) map[string]map[string][]messageField {
+func groupByPackage(types map[string][]messageField, repo string) map[string]map[string][]messageField {
 	byPackage := map[string]map[string][]messageField{}
 	for key, value := range types {
-		if len(value) == 0 && !strings.HasPrefix(key, "%s") {
+		if len(value) == 0 && !strings.HasPrefix(key, repo) {
 			continue
 		}
 		parts := strings.Split(key, ".")

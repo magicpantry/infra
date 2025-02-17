@@ -8,7 +8,7 @@ import (
 	infra_shared "github.com/magicpantry/infra/shared"
 )
 
-func Build(rootDir string, mfMap map[string]*proto.Manifest) string {
+func Build(rootDir string, mfMap map[string]*proto.Manifest, repo string) string {
 	var resources []string
 	for path, mf := range mfMap {
 		cloudbuild := strings.Split(path, rootDir+"/")[1]
@@ -128,7 +128,7 @@ func Build(rootDir string, mfMap map[string]*proto.Manifest) string {
 		if mf.Component.GetWebapp() != nil {
 			inner = fmt.Sprintf(
 				webAppTemplate,
-				cloudbuild, prefix, cloudbuild, cloudbuild)
+				cloudbuild, prefix, cloudbuild, repo, repo, repo, cloudbuild, repo)
 		}
 
 		if mf.RuntimeDependencies != nil {
@@ -160,7 +160,7 @@ func Build(rootDir string, mfMap map[string]*proto.Manifest) string {
 			mf.Component.Namespace, mf.Component.Name,
 			mf.Component.Namespace, mf.Component.Name,
 			strings.Join(includes, "\n"),
-			inner))
+			repo, inner))
 		if mf.Component.GetJob() != nil {
 			resources = append(resources, fmt.Sprintf(
 				jobTriggerTemplate,
