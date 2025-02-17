@@ -239,7 +239,7 @@ const webAppTemplate = `    step {
 
     step {
       name = "gcr.io/$PROJECT_ID/build:latest"
-      dir = "infra/gen"
+      dir = "infra/generate"
       id = "build-infra-gen"
       script = "#!/usr/bin/env bash\nset -e\nmkdir -p bin && go build -o bin/run"
     }
@@ -248,7 +248,7 @@ const webAppTemplate = `    step {
       name = "gcr.io/$PROJECT_ID/build:latest"
       dir = "%s"
       id = "gen"
-      script = "#!/usr/bin/env bash\nset -e\n%s/infra/gen/bin/run"
+      script = "#!/usr/bin/env bash\nset -e\n%s/infra/generate/bin/run"
     }
 
     step {
@@ -280,7 +280,7 @@ const jobTemplate = `    step {
 
     step {
       name = "gcr.io/$PROJECT_ID/build:latest"
-      dir = "infra/gen"
+      dir = "infra/generate"
       id = "build-infra-gen"
       script = "#!/usr/bin/env bash\nset -e\nmkdir -p bin && go build -o bin/run"
     }
@@ -296,7 +296,7 @@ const jobTemplate = `    step {
       name = "gcr.io/$PROJECT_ID/build:latest"
       dir = "%s"
       id = "gen"
-      script = "#!/usr/bin/env bash\nset -e\n%s/infra/gen/bin/run"
+      script = "#!/usr/bin/env bash\nset -e\n%s/infra/generate/bin/run"
     }
 
     step {
@@ -353,7 +353,7 @@ const httpServerTemplate = `    step {
 
     step {
       name = "gcr.io/$PROJECT_ID/build:latest"
-      dir = "infra/gen"
+      dir = "infra/generate"
       id = "build-infra-gen"
       script = "#!/usr/bin/env bash\nset -e\nmkdir -p bin && go build -o bin/run"
     }
@@ -369,7 +369,7 @@ const httpServerTemplate = `    step {
       name = "gcr.io/$PROJECT_ID/build:latest"
       dir = "%s"
       id = "gen"
-      script = "#!/usr/bin/env bash\nset -e\n%s/infra/gen/bin/run"
+      script = "#!/usr/bin/env bash\nset -e\n%s/infra/generate/bin/run"
     }
 
     step {
@@ -425,7 +425,7 @@ const modelRunTemplate = `    step {
 
     step {
       name = "gcr.io/$PROJECT_ID/build:latest"
-      dir = "infra/gen"
+      dir = "infra/generate"
       id = "build-infra-gen"
       script = "#!/usr/bin/env bash\nset -e\nmkdir -p bin && go build -o bin/run"
     }
@@ -434,7 +434,7 @@ const modelRunTemplate = `    step {
       name = "gcr.io/$PROJECT_ID/build:latest"
       dir = "%s"
       id = "gen"
-      script = "#!/usr/bin/env bash\nset -e\n%s/infra/gen/bin/run"
+      script = "#!/usr/bin/env bash\nset -e\n%s/infra/generate/bin/run"
     }
 
     step {
@@ -488,7 +488,7 @@ const modelClusterTemplate = `    step {
 
     step {
       name = "gcr.io/$PROJECT_ID/build:latest"
-      dir = "infra/gen"
+      dir = "infra/generate"
       id = "build-infra-gen"
       script = "#!/usr/bin/env bash\nset -e\nmkdir -p bin && go build -o bin/run"
     }
@@ -497,7 +497,7 @@ const modelClusterTemplate = `    step {
       name = "gcr.io/$PROJECT_ID/build:latest"
       dir = "%s"
       id = "gen"
-      script = "#!/usr/bin/env bash\nset -e\n%s/infra/gen/bin/run"
+      script = "#!/usr/bin/env bash\nset -e\n%s/infra/generate/bin/run"
     }
 
     step {
@@ -546,7 +546,7 @@ const grpcServerClusterTemplate = `    step {
 
     step {
       name = "gcr.io/$PROJECT_ID/build:latest"
-      dir = "infra/gen"
+      dir = "infra/generate"
       id = "build-infra-gen"
       script = "#!/usr/bin/env bash\nset -e\nmkdir -p bin && go build -o bin/run"
     }
@@ -562,7 +562,7 @@ const grpcServerClusterTemplate = `    step {
       name = "gcr.io/$PROJECT_ID/build:latest"
       dir = "%s"
       id = "gen"
-      script = "#!/usr/bin/env bash\nset -e\n%s/infra/gen/bin/run"
+      script = "#!/usr/bin/env bash\nset -e\n%s/infra/generate/bin/run"
     }
 
     step {
@@ -618,7 +618,7 @@ const grpcServerRunTemplate = `    step {
 
     step {
       name = "gcr.io/$PROJECT_ID/build:latest"
-      dir = "infra/gen"
+      dir = "infra/generate"
       id = "build-infra-gen"
       script = "#!/usr/bin/env bash\nset -e\nmkdir -p bin && go build -o bin/run"
     }
@@ -634,7 +634,7 @@ const grpcServerRunTemplate = `    step {
       name = "gcr.io/$PROJECT_ID/build:latest"
       dir = "%s"
       id = "gen"
-      script = "#!/usr/bin/env bash\nset -e\n%s/infra/gen/bin/run"
+      script = "#!/usr/bin/env bash\nset -e\n%s/infra/generate/bin/run"
     }
 
     step {
@@ -693,7 +693,7 @@ const functionTemplate = `    step {
 
     step {
       name = "gcr.io/$PROJECT_ID/build:latest"
-      dir = "infra/gen"
+      dir = "infra/generate"
       id = "build-infra-gen"
       script = "#!/usr/bin/env bash\nset -e\nmkdir -p bin && go build -o bin/run"
     }
@@ -701,14 +701,14 @@ const functionTemplate = `    step {
     step {
       name = "gcr.io/$PROJECT_ID/build:latest"
       id = "gen-protos"
-      script = "#!/usr/bin/env bash\nset -e\ninfra/gen/bin/run"
+      script = "#!/usr/bin/env bash\nset -e\ninfra/generate/bin/run"
     }
 
     step {
       name = "gcr.io/$PROJECT_ID/build:latest"
       dir = "%s"
       id = "gen"
-      script = "#!/usr/bin/env bash\nset -e\n%s/infra/gen/bin/run"
+      script = "#!/usr/bin/env bash\nset -e\n%s/infra/generate/bin/run"
     }
 
     step {
