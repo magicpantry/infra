@@ -14,20 +14,20 @@ import (
 )
 
 func main() {
-	rootDir := shared.RootDir()
-	repo := filepath.Base(rootDir)
 	for componentDir, manifest := range shared.ReadManifest() {
 		log.Printf("build '%s/%s'\n", manifest.Component.Namespace, manifest.Component.Name)
-		runMain(repo, componentDir, manifest)
+		runMain(componentDir, manifest)
 	}
 }
 
-func runMain(repo, componentDir string, mf *proto.Manifest) {
+func runMain(componentDir string, mf *proto.Manifest) {
 	if mf.Component.GetEndpoints() == nil {
 		return
 	}
 
 	paths := shared.MakePaths(componentDir)
+	root := shared.ReadRootAtPath(paths.RootDir + "/root.textproto")
+    repo := root.Repo
 
 	serviceURL, ok := checkIfServiceExists(mf)
 	if !ok {

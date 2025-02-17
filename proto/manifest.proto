@@ -209,6 +209,7 @@ message Manifest {
 }
 
 message Root {
-  repeated string services = 1;
-  Config config = 2;
+  string repo = 1;
+  repeated string services = 2;
+  Config config = 3;
 }

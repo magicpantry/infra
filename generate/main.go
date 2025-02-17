@@ -39,26 +39,27 @@ import (
 
 func main() {
 	rootDir := infra_shared.RootDir()
-	repo := filepath.Base(rootDir)
+	root := infra_shared.ReadRootAtPath(rootDir + "/root.textproto")
+    repo := root.Repo
 	for componentDir, manifest := range infra_shared.ReadManifest() {
 		log.Printf("gen '%s/%s'\n", manifest.Component.Namespace, manifest.Component.Name)
 		if manifest.Component.GetJob() != nil {
-			genJob(componentDir, manifest, repo)
+			genJob(componentDir, manifest)
 		}
 		if manifest.Component.GetModelServer() != nil {
 			genModelServer(componentDir, manifest)
 		}
 		if manifest.Component.GetHttpServer() != nil {
-			genHTTPServer(componentDir, manifest, repo)
+			genHTTPServer(componentDir, manifest)
 		}
 		if manifest.Component.GetGrpcServer() != nil {
-			genGRPCServer(componentDir, manifest, repo)
+			genGRPCServer(componentDir, manifest)
 		}
 		if manifest.Component.GetFunction() != nil {
-			genFunction(componentDir, manifest, repo)
+			genFunction(componentDir, manifest)
 		}
 		if manifest.Component.GetWebapp() != nil {
-			genWebApp(componentDir, manifest, repo)
+			genWebApp(componentDir, manifest)
 		}
 	}
 	if err := os.WriteFile(rootDir+"/terraform/infra_gen.tf", []byte(terraform.Build(rootDir, infra_shared.ReadAllManifests(), repo)), 0644); err != nil {
@@ -66,10 +67,10 @@ func main() {
 	}
 }
 
-func genWebApp(componentDir string, manifest *proto.Manifest, repo string) {
+func genWebApp(componentDir string, manifest *proto.Manifest) {
 	paths := infra_shared.MakePaths(componentDir)
-
 	root := infra_shared.ReadRootAtPath(paths.RootDir + "/root.textproto")
+    repo := root.Repo
 
 	if len(manifest.Config.Items) > 0 {
 		if err := os.MkdirAll(paths.ComponentDir+"/src/app/gen/providers", os.ModePerm); err != nil {
@@ -1223,12 +1224,14 @@ func isAllLower(x string) bool {
 	return true
 }
 
-func genFunction(componentDir string, manifest *proto.Manifest, repo string) {
+func genFunction(componentDir string, manifest *proto.Manifest) {
 	protos := filter(manifest.BuildDependencies.Items, func(x string) bool {
 		return strings.HasSuffix(x, ".proto")
 	})
 
 	paths := infra_shared.MakePaths(componentDir)
+	root := infra_shared.ReadRootAtPath(paths.RootDir + "/root.textproto")
+    repo := root.Repo
 
 	if len(protos) > 0 {
 		if err := os.MkdirAll(paths.WorkspaceDir, os.ModePerm); err != nil {
@@ -1281,13 +1284,15 @@ func genFunction(componentDir string, manifest *proto.Manifest, repo string) {
 	}
 
 	infra_shared.Run("cd " + paths.GenDir + "/manifest" + " && go fmt")
-	infra_shared.Run("cd " + paths.GenDir + "/mockmanifest" + " && cat manifest.go && go fmt")
+	infra_shared.Run("cd " + paths.GenDir + "/mockmanifest" + " && go fmt")
 	infra_shared.Run("cd " + paths.ComponentDir + " && go fmt ./...")
 	infra_shared.Run("cd " + paths.RootDir + " && go fmt")
 }
 
-func genJob(componentDir string, manifest *proto.Manifest, repo string) {
+func genJob(componentDir string, manifest *proto.Manifest) {
 	paths := infra_shared.MakePaths(componentDir)
+	root := infra_shared.ReadRootAtPath(paths.RootDir + "/root.textproto")
+    repo := root.Repo
 
 	protos := filter(manifest.BuildDependencies.Items, func(x string) bool {
 		return strings.HasSuffix(x, ".proto")
@@ -1356,7 +1361,7 @@ func genJob(componentDir string, manifest *proto.Manifest, repo string) {
 	}()
 
 	infra_shared.Run("cd " + paths.GenDir + "/manifest" + " && go fmt")
-	infra_shared.Run("cd " + paths.GenDir + "/mockmanifest" + " && cat manifest.go && go fmt")
+	infra_shared.Run("cd " + paths.GenDir + "/mockmanifest" + " && go fmt")
 	infra_shared.Run("cd " + paths.GenDir + "/cmd" + " && go fmt")
 }
 
@@ -1503,8 +1508,10 @@ spec:
 	infra_shared.Run("cd " + paths.WorkspaceDir + " && make")
 }
 
-func genHTTPServer(componentDir string, manifest *proto.Manifest, repo string) {
+func genHTTPServer(componentDir string, manifest *proto.Manifest) {
 	paths := infra_shared.MakePaths(componentDir)
+	root := infra_shared.ReadRootAtPath(paths.RootDir + "/root.textproto")
+    repo := root.Repo
 	httpServerManifest := manifest.Component.GetHttpServer()
 
 	if err := os.MkdirAll(paths.GenDir+"/cmd", os.ModePerm); err != nil {
@@ -1559,16 +1566,18 @@ func genHTTPServer(componentDir string, manifest *proto.Manifest, repo string) {
 	}()
 
 	infra_shared.Run("cd " + paths.GenDir + "/manifest" + " && go fmt")
-	infra_shared.Run("cd " + paths.GenDir + "/mockmanifest" + " && cat manifest.go && go fmt")
+	infra_shared.Run("cd " + paths.GenDir + "/mockmanifest" + " && go fmt")
 	infra_shared.Run("cd " + paths.GenDir + "/cmd" + " && go fmt")
 }
 
-func genGRPCServer(componentDir string, manifest *proto.Manifest, repo string) {
+func genGRPCServer(componentDir string, manifest *proto.Manifest) {
 	protos := filter(manifest.BuildDependencies.Items, func(x string) bool {
 		return strings.HasSuffix(x, ".proto")
 	})
 
 	paths := infra_shared.MakePaths(componentDir)
+	root := infra_shared.ReadRootAtPath(paths.RootDir + "/root.textproto")
+    repo := root.Repo
 
 	if len(protos) > 0 {
 		if err := os.MkdirAll(paths.WorkspaceDir, os.ModePerm); err != nil {
@@ -1689,7 +1698,7 @@ spec:
 	}
 
 	infra_shared.Run("cd " + paths.GenDir + "/manifest" + " && go fmt")
-	infra_shared.Run("cd " + paths.GenDir + "/mockmanifest" + " && cat manifest.go && go fmt")
+	infra_shared.Run("cd " + paths.GenDir + "/mockmanifest" + " && go fmt")
 	infra_shared.Run("cd " + paths.GenDir + "/cmd" + " && go fmt")
 }
 
