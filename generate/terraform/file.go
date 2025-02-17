@@ -227,7 +227,7 @@ const webAppTemplate = `    step {
         name = "gcr.io/cloud-builders/git"
         args:
         - clone
-        - git@github.com:magicpantry/infra
+        - https://github.com/magicpantry/infra
     }
 
     step {
@@ -268,7 +268,7 @@ const jobTemplate = `    step {
         name = "gcr.io/cloud-builders/git"
         args:
         - clone
-        - git@github.com:magicpantry/infra
+        - https://github.com/magicpantry/infra
     }
 
     step {
@@ -341,7 +341,7 @@ const httpServerTemplate = `    step {
         name = "gcr.io/cloud-builders/git"
         args:
         - clone
-        - git@github.com:magicpantry/infra
+        - https://github.com/magicpantry/infra
     }
 
     step {
@@ -413,7 +413,7 @@ const modelRunTemplate = `    step {
         name = "gcr.io/cloud-builders/git"
         args:
         - clone
-        - git@github.com:magicpantry/infra
+        - https://github.com/magicpantry/infra
     }
 
     step {
@@ -476,7 +476,7 @@ const modelClusterTemplate = `    step {
         name = "gcr.io/cloud-builders/git"
         args:
         - clone
-        - git@github.com:magicpantry/infra
+        - https://github.com/magicpantry/infra
     }
 
     step {
@@ -534,7 +534,7 @@ const grpcServerClusterTemplate = `    step {
         name = "gcr.io/cloud-builders/git"
         args:
         - clone
-        - git@github.com:magicpantry/infra
+        - https://github.com/magicpantry/infra
     }
 
     step {
@@ -606,7 +606,7 @@ const grpcServerRunTemplate = `    step {
         name = "gcr.io/cloud-builders/git"
         args:
         - clone
-        - git@github.com:magicpantry/infra
+        - https://github.com/magicpantry/infra
     }
 
     step {
@@ -681,7 +681,7 @@ const functionTemplate = `    step {
         name = "gcr.io/cloud-builders/git"
         args:
         - clone
-        - git@github.com:magicpantry/infra
+        - https://github.com/magicpantry/infra
     }
 
     step {
@@ -736,7 +736,7 @@ const endpointsTemplate = `    step {
         name = "gcr.io/cloud-builders/git"
         args:
         - clone
-        - git@github.com:magicpantry/infra
+        - https://github.com/magicpantry/infra
     }
 
     step {
