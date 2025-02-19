@@ -40,7 +40,7 @@ import (
 func main() {
 	rootDir := infra_shared.RootDir()
 	root := infra_shared.ReadRootAtPath(rootDir + "/root.textproto")
-    repo := root.Repo
+	repo := root.Repo
 	for componentDir, manifest := range infra_shared.ReadManifest() {
 		log.Printf("gen '%s/%s'\n", manifest.Component.Namespace, manifest.Component.Name)
 		if manifest.Component.GetJob() != nil {
@@ -62,6 +62,9 @@ func main() {
 			genWebApp(componentDir, manifest)
 		}
 	}
+	if err := os.MkdirAll(rootDir+"/terraform", os.ModePerm); err != nil {
+		log.Fatal(err)
+	}
 	if err := os.WriteFile(rootDir+"/terraform/infra_gen.tf", []byte(terraform.Build(rootDir, infra_shared.ReadAllManifests(), repo)), 0644); err != nil {
 		log.Fatal(err)
 	}
@@ -70,7 +73,7 @@ func main() {
 func genWebApp(componentDir string, manifest *proto.Manifest) {
 	paths := infra_shared.MakePaths(componentDir)
 	root := infra_shared.ReadRootAtPath(paths.RootDir + "/root.textproto")
-    repo := root.Repo
+	repo := root.Repo
 
 	if len(manifest.Config.Items) > 0 {
 		if err := os.MkdirAll(paths.ComponentDir+"/src/app/gen/providers", os.ModePerm); err != nil {
@@ -1231,7 +1234,7 @@ func genFunction(componentDir string, manifest *proto.Manifest) {
 
 	paths := infra_shared.MakePaths(componentDir)
 	root := infra_shared.ReadRootAtPath(paths.RootDir + "/root.textproto")
-    repo := root.Repo
+	repo := root.Repo
 
 	if len(protos) > 0 {
 		if err := os.MkdirAll(paths.WorkspaceDir, os.ModePerm); err != nil {
@@ -1292,7 +1295,7 @@ func genFunction(componentDir string, manifest *proto.Manifest) {
 func genJob(componentDir string, manifest *proto.Manifest) {
 	paths := infra_shared.MakePaths(componentDir)
 	root := infra_shared.ReadRootAtPath(paths.RootDir + "/root.textproto")
-    repo := root.Repo
+	repo := root.Repo
 
 	protos := filter(manifest.BuildDependencies.Items, func(x string) bool {
 		return strings.HasSuffix(x, ".proto")
@@ -1383,7 +1386,7 @@ func genModelServer(componentDir string, manifest *proto.Manifest) {
 		log.Fatal(err)
 	}
 
-	f, err := os.Open(paths.RootDir + "/infra/generate/tmpls/model_server.py")
+	f, err := os.Open(paths.InfraDir + "/generate/tmpls/model_server.py")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -1511,7 +1514,7 @@ spec:
 func genHTTPServer(componentDir string, manifest *proto.Manifest) {
 	paths := infra_shared.MakePaths(componentDir)
 	root := infra_shared.ReadRootAtPath(paths.RootDir + "/root.textproto")
-    repo := root.Repo
+	repo := root.Repo
 	httpServerManifest := manifest.Component.GetHttpServer()
 
 	if err := os.MkdirAll(paths.GenDir+"/cmd", os.ModePerm); err != nil {
@@ -1577,7 +1580,7 @@ func genGRPCServer(componentDir string, manifest *proto.Manifest) {
 
 	paths := infra_shared.MakePaths(componentDir)
 	root := infra_shared.ReadRootAtPath(paths.RootDir + "/root.textproto")
-    repo := root.Repo
+	repo := root.Repo
 
 	if len(protos) > 0 {
 		if err := os.MkdirAll(paths.WorkspaceDir, os.ModePerm); err != nil {

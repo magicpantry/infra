@@ -25,7 +25,7 @@ type ServiceFunc struct {
 }
 
 type FunctionTemplate struct {
-    Repo      string
+	Repo      string
 	Imports   []shared.Import
 	Namespace string
 	Name      string
@@ -36,7 +36,7 @@ type FunctionTemplate struct {
 func Build(paths infra_shared.Paths, mf *proto.Manifest, repo string) string {
 	tmpl := shared.LoadTemplate(paths, "function.tmpl")
 	functionTemplate := FunctionTemplate{
-        Repo:      repo,
+		Repo:      repo,
 		Namespace: mf.Component.Namespace,
 		Name:      mf.Component.Name,
 	}

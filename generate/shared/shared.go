@@ -192,7 +192,7 @@ func LoadTemplate(paths shared.Paths, name string) *template.Template {
 			return strings.Replace(input, from, to, -1)
 		},
 	}
-	bs, err := os.ReadFile(paths.RootDir + "/infra/generate/tmpls/" + name)
+	bs, err := os.ReadFile(paths.InfraDir + "/generate/tmpls/" + name)
 	if err != nil {
 		log.Fatal(err)
 	}

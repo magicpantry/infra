@@ -27,7 +27,7 @@ func runMain(componentDir string, mf *proto.Manifest) {
 
 	paths := shared.MakePaths(componentDir)
 	root := shared.ReadRootAtPath(paths.RootDir + "/root.textproto")
-    repo := root.Repo
+	repo := root.Repo
 
 	serviceURL, ok := checkIfServiceExists(mf)
 	if !ok {

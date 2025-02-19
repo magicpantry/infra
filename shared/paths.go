@@ -7,6 +7,7 @@ import (
 )
 
 type Paths struct {
+	InfraDir     string
 	RootDir      string
 	ComponentDir string
 	GenDir       string
@@ -28,7 +29,14 @@ func MakePaths(componentDir string) Paths {
 	workspaceDir := rootDir + "/.workspace/" + serviceRelativeDir
 	genDir := rootDir + "/gen/" + serviceRelativeDir
 
+	infraDir := rootDir + "/infra"
+	if _, err := os.Stat(infraDir); err != nil {
+		parts := strings.Split(rootDir, "/")
+		infraDir = strings.Join(parts[:len(parts)-1], "/") + "/infra"
+	}
+
 	return Paths{
+		InfraDir:            infraDir,
 		RootDir:             rootDir,
 		ComponentDir:        componentDir,
 		GenDir:              genDir,
