@@ -34,12 +34,12 @@ func filterBlock(content string) []string {
 func main() {
 	paths := shared.MakePaths("")
 
-	shared.Run(fmt.Sprintf("cd %s/bootstrap && mkdir -p bin && go build -o bin/run", paths.RootDir))
-	shared.Run(fmt.Sprintf("cd %s/build && mkdir -p bin && go build -o bin/run", paths.RootDir))
-	shared.Run(fmt.Sprintf("cd %s/generate && mkdir -p bin && go build -o bin/run", paths.RootDir))
-	shared.Run(fmt.Sprintf("cd %s/run && mkdir -p bin && go build -o bin/run", paths.RootDir))
-	shared.Run(fmt.Sprintf("cd %s/test && mkdir -p bin && go build -o bin/run", paths.RootDir))
-	shared.Run(fmt.Sprintf("cd %s/endpoints && mkdir -p bin && go build -o bin/run", paths.RootDir))
+	shared.Run(fmt.Sprintf("cd %s/bootstrap && mkdir -p bin && go build -o bin/run", paths.InfraDir))
+	shared.Run(fmt.Sprintf("cd %s/build && mkdir -p bin && go build -o bin/run", paths.InfraDir))
+	shared.Run(fmt.Sprintf("cd %s/generate && mkdir -p bin && go build -o bin/run", paths.InfraDir))
+	shared.Run(fmt.Sprintf("cd %s/run && mkdir -p bin && go build -o bin/run", paths.InfraDir))
+	shared.Run(fmt.Sprintf("cd %s/test && mkdir -p bin && go build -o bin/run", paths.InfraDir))
+	shared.Run(fmt.Sprintf("cd %s/endpoints && mkdir -p bin && go build -o bin/run", paths.InfraDir))
 
 	bs, err := os.ReadFile(os.ExpandEnv("$HOME/.bashrc"))
 	if err != nil {
@@ -49,12 +49,12 @@ func main() {
 	filtered := filterBlock(string(bs))
 	filtered = append(filtered, "### infra START ###")
 
-	filtered = append(filtered, fmt.Sprintf("alias infra_bootstrap='%s/bootstrap/bin/run'", paths.RootDir))
-	filtered = append(filtered, fmt.Sprintf("alias infra_build='%s/build/bin/run'", paths.RootDir))
-	filtered = append(filtered, fmt.Sprintf("alias infra_generate='%s/generate/bin/run'", paths.RootDir))
-	filtered = append(filtered, fmt.Sprintf("alias infra_run='%s/run/bin/run'", paths.RootDir))
-	filtered = append(filtered, fmt.Sprintf("alias infra_test='%s/test/bin/run'", paths.RootDir))
-	filtered = append(filtered, fmt.Sprintf("alias infra_endpoints='%s/endpoints/bin/run'", paths.RootDir))
+	filtered = append(filtered, fmt.Sprintf("alias infra_bootstrap='%s/bootstrap/bin/run'", paths.InfraDir))
+	filtered = append(filtered, fmt.Sprintf("alias infra_build='%s/build/bin/run'", paths.InfraDir))
+	filtered = append(filtered, fmt.Sprintf("alias infra_generate='%s/generate/bin/run'", paths.InfraDir))
+	filtered = append(filtered, fmt.Sprintf("alias infra_run='%s/run/bin/run'", paths.InfraDir))
+	filtered = append(filtered, fmt.Sprintf("alias infra_test='%s/test/bin/run'", paths.InfraDir))
+	filtered = append(filtered, fmt.Sprintf("alias infra_endpoints='%s/endpoints/bin/run'", paths.InfraDir))
 
 	filtered = append(filtered, "### infra END ###")
 
