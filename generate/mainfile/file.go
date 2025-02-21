@@ -101,6 +101,10 @@ func Build(paths infra_shared.Paths, mf *proto.Manifest, rpcs []shared.RPCInfo, 
 		rootConfigs[item.Name] = item
 	}
 
+	mainTemplate.InitLines = append(
+		mainTemplate.InitLines,
+		fmt.Sprintf("mf.Repo = \"%s\"", repo))
+
 	handleConfigItem := func(ci *proto.ConfigItem) {
 		if ci.GetIntValue() != 0 {
 			mainTemplate.InitLines = append(
