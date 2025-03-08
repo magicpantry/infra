@@ -19,6 +19,13 @@ type ManifestTemplate struct {
 }
 
 func configItemToNameTypePair(ci *proto.ConfigItem) *shared.NameTypePair {
+	if ci.GetPluginValue() != nil {
+		plugin := ci.GetPluginValue()
+		return &shared.NameTypePair{
+			Name: ci.Name,
+			Type: fmt.Sprintf("*%s", plugin.ManifestType),
+		}
+	}
 	if ci.GetIntValue() != 0 {
 		return &shared.NameTypePair{
 			Name: ci.Name,
@@ -78,6 +85,15 @@ func Build(paths infra_shared.Paths, mf *proto.Manifest, repo string) string {
 					continue
 				}
 				manifestTemplate.Configs = append(manifestTemplate.Configs, *ntp)
+			}
+			if config.GetPluginValue() != nil {
+				plugin := config.GetPluginValue()
+				for _, importInfo := range plugin.Imports {
+					manifestTemplate.Imports = append(manifestTemplate.Imports, shared.Import{
+						Import:     importInfo,
+						ImportType: shared.ImportTypeLocal,
+					})
+				}
 			}
 		}
 	}

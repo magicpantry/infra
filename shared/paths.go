@@ -30,7 +30,7 @@ func MakePaths(componentDir string) Paths {
 	genDir := rootDir + "/gen/" + serviceRelativeDir
 
 	infraDir := rootDir + "/infra"
-	if _, err := os.Stat(infraDir); err != nil {
+	if _, err := os.Stat(infraDir + "/generate"); err != nil {
 		parts := strings.Split(rootDir, "/")
 		infraDir = strings.Join(parts[:len(parts)-1], "/") + "/infra"
 	}

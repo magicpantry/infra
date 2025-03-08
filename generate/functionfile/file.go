@@ -75,6 +75,9 @@ func Build(paths infra_shared.Paths, mf *proto.Manifest, repo string) string {
 	addContext := false
 	if mf.Config != nil {
 		for _, config := range mf.Config.Items {
+			if config.GetPluginValue() != nil {
+				log.Fatal("config plugin isn't supported for functions")
+			}
 			if config.GetIntValue() != 0 {
 				functionTemplate.InitLines = append(
 					functionTemplate.InitLines,
