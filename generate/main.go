@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os/exec"
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -15,6 +17,8 @@ import (
 	"sort"
 	"strings"
 	"unicode"
+
+	"google.golang.org/protobuf/encoding/prototext"
 
 	"github.com/magicpantry/infra/gen/proto"
 	"github.com/magicpantry/infra/generate/dockerfile"
@@ -43,17 +47,52 @@ func main() {
 	repo := root.Repo
 	for componentDir, manifest := range infra_shared.ReadManifest() {
 		log.Printf("gen '%s/%s'\n", manifest.Component.Namespace, manifest.Component.Name)
+
+		configPlugins := map[string]*proto.ConfigPluginOutput{}
+		for _, item := range manifest.Config.Items {
+			if item.GetPluginValue() == nil {
+				continue
+			}
+
+			plugin := item.GetPluginValue()
+			path := plugin.Path
+			bs, err := prototext.Marshal(item)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			var buf bytes.Buffer
+			var out strings.Builder
+			buf.Write(bs)
+			cmd := exec.Command("go", "run", fmt.Sprintf("%s/%s/main.go", infra_shared.RootDir(), path))
+			cmd.Stdout = &out
+			cmd.Stdin = &buf
+			cmd.Stderr = os.Stderr
+
+			if err := cmd.Run(); err != nil {
+				log.Fatal(err)
+			}
+
+			content := out.String()
+			var output proto.ConfigPluginOutput
+			if err := prototext.Unmarshal([]byte(content), &output); err != nil {
+				log.Fatal(err)
+			}
+
+			configPlugins[item.Name] = &output
+		}
+
 		if manifest.Component.GetJob() != nil {
-			genJob(componentDir, manifest)
+			genJob(componentDir, manifest, configPlugins)
 		}
 		if manifest.Component.GetModelServer() != nil {
 			genModelServer(componentDir, manifest)
 		}
 		if manifest.Component.GetHttpServer() != nil {
-			genHTTPServer(componentDir, manifest)
+			genHTTPServer(componentDir, manifest, configPlugins)
 		}
 		if manifest.Component.GetGrpcServer() != nil {
-			genGRPCServer(componentDir, manifest)
+			genGRPCServer(componentDir, manifest, configPlugins)
 		}
 		if manifest.Component.GetFunction() != nil {
 			genFunction(componentDir, manifest)
@@ -1292,7 +1331,7 @@ func genFunction(componentDir string, manifest *proto.Manifest) {
 	infra_shared.Run("cd " + paths.RootDir + " && go fmt")
 }
 
-func genJob(componentDir string, manifest *proto.Manifest) {
+func genJob(componentDir string, manifest *proto.Manifest, configPlugins map[string]*proto.ConfigPluginOutput) {
 	paths := infra_shared.MakePaths(componentDir)
 	root := infra_shared.ReadRootAtPath(paths.RootDir + "/root.textproto")
 	repo := root.Repo
@@ -1327,7 +1366,7 @@ func genJob(componentDir string, manifest *proto.Manifest) {
 	if err := os.WriteFile(paths.GenDir+"/infra/Dockerfile", []byte(dockerfile.Build(paths, manifest)), 0644); err != nil {
 		log.Fatal(err)
 	}
-	if err := os.WriteFile(paths.GenDir+"/cmd/main.go", []byte(mainfile.Build(paths, manifest, nil, repo)), 0644); err != nil {
+	if err := os.WriteFile(paths.GenDir+"/cmd/main.go", []byte(mainfile.Build(paths, manifest, nil, repo, configPlugins)), 0644); err != nil {
 		log.Fatal(err)
 	}
 	if err := os.WriteFile(paths.GenDir+"/manifest/manifest.go", []byte(manifestfile.Build(paths, manifest, repo)), 0644); err != nil {
@@ -1511,7 +1550,7 @@ spec:
 	infra_shared.Run("cd " + paths.WorkspaceDir + " && make")
 }
 
-func genHTTPServer(componentDir string, manifest *proto.Manifest) {
+func genHTTPServer(componentDir string, manifest *proto.Manifest, configPlugins map[string]*proto.ConfigPluginOutput) {
 	paths := infra_shared.MakePaths(componentDir)
 	root := infra_shared.ReadRootAtPath(paths.RootDir + "/root.textproto")
 	repo := root.Repo
@@ -1532,7 +1571,7 @@ func genHTTPServer(componentDir string, manifest *proto.Manifest) {
 	if err := os.WriteFile(paths.GenDir+"/infra/Dockerfile", []byte(dockerfile.Build(paths, manifest)), 0644); err != nil {
 		log.Fatal(err)
 	}
-	if err := os.WriteFile(paths.GenDir+"/cmd/main.go", []byte(mainfile.Build(paths, manifest, nil, repo)), 0644); err != nil {
+	if err := os.WriteFile(paths.GenDir+"/cmd/main.go", []byte(mainfile.Build(paths, manifest, nil, repo, configPlugins)), 0644); err != nil {
 		log.Fatal(err)
 	}
 	if err := os.WriteFile(paths.GenDir+"/manifest/manifest.go", []byte(manifestfile.Build(paths, manifest, repo)), 0644); err != nil {
@@ -1573,7 +1612,7 @@ func genHTTPServer(componentDir string, manifest *proto.Manifest) {
 	infra_shared.Run("cd " + paths.GenDir + "/cmd" + " && go fmt")
 }
 
-func genGRPCServer(componentDir string, manifest *proto.Manifest) {
+func genGRPCServer(componentDir string, manifest *proto.Manifest, configPlugins map[string]*proto.ConfigPluginOutput) {
 	protos := filter(manifest.BuildDependencies.Items, func(x string) bool {
 		return strings.HasSuffix(x, ".proto")
 	})
@@ -1612,7 +1651,7 @@ func genGRPCServer(componentDir string, manifest *proto.Manifest) {
 	if err := os.WriteFile(paths.GenDir+"/infra/Dockerfile", []byte(dockerfile.Build(paths, manifest)), 0644); err != nil {
 		log.Fatal(err)
 	}
-	if err := os.WriteFile(paths.GenDir+"/cmd/main.go", []byte(mainfile.Build(paths, manifest, rpcs, repo)), 0644); err != nil {
+	if err := os.WriteFile(paths.GenDir+"/cmd/main.go", []byte(mainfile.Build(paths, manifest, rpcs, repo, configPlugins)), 0644); err != nil {
 		log.Fatal(err)
 	}
 	if err := os.WriteFile(paths.GenDir+"/manifest/manifest.go", []byte(manifestfile.Build(paths, manifest, repo)), 0644); err != nil {

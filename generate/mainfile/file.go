@@ -1,14 +1,10 @@
 package mainfile
 
 import (
-	"os"
-	"os/exec"
 	"bytes"
 	"fmt"
 	"log"
 	"strings"
-
-	"google.golang.org/protobuf/encoding/prototext"
 
 	"github.com/magicpantry/infra/gen/proto"
 	"github.com/magicpantry/infra/generate/shared"
@@ -39,7 +35,7 @@ type MainTemplate struct {
 	Custom       string
 }
 
-func Build(paths infra_shared.Paths, mf *proto.Manifest, rpcs []shared.RPCInfo, repo string) string {
+func Build(paths infra_shared.Paths, mf *proto.Manifest, rpcs []shared.RPCInfo, repo string, configPlugins map[string]*proto.ConfigPluginOutput) string {
 	addContext := false
 
 	tmpl := shared.LoadTemplate(paths, "main.tmpl")
@@ -111,30 +107,7 @@ func Build(paths infra_shared.Paths, mf *proto.Manifest, rpcs []shared.RPCInfo, 
 
 	handleConfigItem := func(ci *proto.ConfigItem) {
 		if ci.GetPluginValue() != nil {
-			plugin := ci.GetPluginValue()
-			path := plugin.Path
-			bs, err := prototext.Marshal(plugin)
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			var buf bytes.Buffer
-			var out strings.Builder
-			buf.Write(bs)
-			cmd := exec.Command("go", "run", fmt.Sprintf("%s/%s/main.go", paths.RootDir, path))
-			cmd.Stdout = &out
-			cmd.Stdin = &buf
-			cmd.Stderr = os.Stderr
-
-			if err := cmd.Run(); err != nil {
-				log.Fatal(err)
-			}
-
-			content := out.String()
-			var output proto.ConfigPluginOutput
-			if err := prototext.Unmarshal([]byte(content), &output); err != nil {
-				log.Fatal(err)
-			}
+			output := configPlugins[ci.Name]
 
 			for _, imp := range output.Imports {
 				mainTemplate.Imports = append(mainTemplate.Imports, shared.Import{

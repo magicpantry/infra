@@ -98,15 +98,15 @@ message KeyValue {
 
 message ConfigPlugin {
 	string path = 1;
-	repeated string imports = 2;
-	string manifest_type = 3;
-	repeated KeyValue args = 4;
+	repeated KeyValue args = 2;
 }
 
 message ConfigPluginOutput {
-	repeated string imports = 1;
-	repeated string init = 2;
-	KeyValue assignment = 3;
+	repeated string main_imports = 1;
+	repeated string manifest_imports = 2;
+	string manifest_type = 3;
+	repeated string init = 4;
+	KeyValue assignment = 5;
 }
 
 message ConfigItem {
