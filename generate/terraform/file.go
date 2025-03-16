@@ -212,7 +212,6 @@ const template = `
 resource "google_cloudbuild_trigger" "prod-%s-%s-trigger" {
   name = "prod-%s-%s-trigger"
   location = "global"
-  timeout = "1800s"
 
   included_files = [
 %s
@@ -228,6 +227,8 @@ resource "google_cloudbuild_trigger" "prod-%s-%s-trigger" {
   }
 
   build {
+    timeout = "1800s"
+
 %s
   }
 }`
