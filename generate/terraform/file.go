@@ -219,7 +219,7 @@ resource "google_cloud_scheduler_job" "prod-%s-%s-job" {
     name = "prod-%s-%s-job"
     description = "trigger %s-%s"
     schedule = "%s"
-    attempt_deadline = "30s"
+    attempt_deadline = "1800s"
     region = "us-east1"
     project = "magicpantryio"
 
@@ -370,6 +370,8 @@ const jobTemplate = `    step {
         "east-serverless",
         "--region",
         "us-east1",
+        "--memory",
+        "1Gi"
       ]
     }`
 
