@@ -172,8 +172,16 @@ func Build(rootDir string, mfMap map[string]*proto.Manifest, repo string) string
 		}
 	}
 
-	return strings.TrimSpace(strings.Join(resources, "\n"))
+	return providerTemplate + "\n" + strings.TrimSpace(strings.Join(resources, "\n"))
 }
+
+const providerTemplate = `
+provider "google" {
+	project = "magicpantryio"
+	region = "us-east1"
+	zone = "us-east1-b"
+}
+`
 
 const jobTriggerTemplate = `
 resource "google_cloud_scheduler_job" "prod-%s-%s-job" {
