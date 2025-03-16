@@ -95,7 +95,7 @@ func main() {
 			genGRPCServer(componentDir, manifest, configPlugins)
 		}
 		if manifest.Component.GetFunction() != nil {
-			genFunction(componentDir, manifest)
+			genFunction(componentDir, manifest, configPlugins)
 		}
 		if manifest.Component.GetWebapp() != nil {
 			genWebApp(componentDir, manifest)
@@ -1266,7 +1266,7 @@ func isAllLower(x string) bool {
 	return true
 }
 
-func genFunction(componentDir string, manifest *proto.Manifest) {
+func genFunction(componentDir string, manifest *proto.Manifest, configPlugins map[string]*proto.ConfigPluginOutput) {
 	protos := filter(manifest.BuildDependencies.Items, func(x string) bool {
 		return strings.HasSuffix(x, ".proto")
 	})
@@ -1293,7 +1293,7 @@ func genFunction(componentDir string, manifest *proto.Manifest) {
 		log.Fatal(err)
 	}
 
-	if err := os.WriteFile(paths.GenDir+"/manifest/manifest.go", []byte(manifestfile.Build(paths, manifest, repo)), 0644); err != nil {
+	if err := os.WriteFile(paths.GenDir+"/manifest/manifest.go", []byte(manifestfile.Build(paths, manifest, repo, configPlugins)), 0644); err != nil {
 		log.Fatal(err)
 	}
 	if err := os.WriteFile(paths.GenDir+"/mockmanifest/manifest.go", []byte(mockmanifestfile.Build(paths, manifest, nil, repo)), 0644); err != nil {
@@ -1369,7 +1369,7 @@ func genJob(componentDir string, manifest *proto.Manifest, configPlugins map[str
 	if err := os.WriteFile(paths.GenDir+"/cmd/main.go", []byte(mainfile.Build(paths, manifest, nil, repo, configPlugins)), 0644); err != nil {
 		log.Fatal(err)
 	}
-	if err := os.WriteFile(paths.GenDir+"/manifest/manifest.go", []byte(manifestfile.Build(paths, manifest, repo)), 0644); err != nil {
+	if err := os.WriteFile(paths.GenDir+"/manifest/manifest.go", []byte(manifestfile.Build(paths, manifest, repo, configPlugins)), 0644); err != nil {
 		log.Fatal(err)
 	}
 	if err := os.WriteFile(paths.GenDir+"/mockmanifest/manifest.go", []byte(mockmanifestfile.Build(paths, manifest, nil,
@@ -1574,7 +1574,7 @@ func genHTTPServer(componentDir string, manifest *proto.Manifest, configPlugins 
 	if err := os.WriteFile(paths.GenDir+"/cmd/main.go", []byte(mainfile.Build(paths, manifest, nil, repo, configPlugins)), 0644); err != nil {
 		log.Fatal(err)
 	}
-	if err := os.WriteFile(paths.GenDir+"/manifest/manifest.go", []byte(manifestfile.Build(paths, manifest, repo)), 0644); err != nil {
+	if err := os.WriteFile(paths.GenDir+"/manifest/manifest.go", []byte(manifestfile.Build(paths, manifest, repo, configPlugins)), 0644); err != nil {
 		log.Fatal(err)
 	}
 	if err := os.WriteFile(paths.GenDir+"/mockmanifest/manifest.go", []byte(mockmanifestfile.Build(paths, manifest, nil,
@@ -1654,7 +1654,7 @@ func genGRPCServer(componentDir string, manifest *proto.Manifest, configPlugins 
 	if err := os.WriteFile(paths.GenDir+"/cmd/main.go", []byte(mainfile.Build(paths, manifest, rpcs, repo, configPlugins)), 0644); err != nil {
 		log.Fatal(err)
 	}
-	if err := os.WriteFile(paths.GenDir+"/manifest/manifest.go", []byte(manifestfile.Build(paths, manifest, repo)), 0644); err != nil {
+	if err := os.WriteFile(paths.GenDir+"/manifest/manifest.go", []byte(manifestfile.Build(paths, manifest, repo, configPlugins)), 0644); err != nil {
 		log.Fatal(err)
 	}
 	if err := os.WriteFile(paths.GenDir+"/mockmanifest/manifest.go", []byte(mockmanifestfile.Build(paths, manifest, rpcs, repo)), 0644); err != nil {

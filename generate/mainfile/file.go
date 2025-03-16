@@ -109,7 +109,7 @@ func Build(paths infra_shared.Paths, mf *proto.Manifest, rpcs []shared.RPCInfo, 
 		if ci.GetPluginValue() != nil {
 			output := configPlugins[ci.Name]
 
-			for _, imp := range output.Imports {
+			for _, imp := range output.MainImports {
 				mainTemplate.Imports = append(mainTemplate.Imports, shared.Import{
 					Import:     imp,
 					ImportType: shared.ImportTypeExternal,

@@ -18,12 +18,11 @@ type ManifestTemplate struct {
 	Dependencies []shared.NameTypePair
 }
 
-func configItemToNameTypePair(ci *proto.ConfigItem) *shared.NameTypePair {
+func configItemToNameTypePair(ci *proto.ConfigItem, configPlugins map[string]*proto.ConfigPluginOutput) *shared.NameTypePair {
 	if ci.GetPluginValue() != nil {
-		plugin := ci.GetPluginValue()
 		return &shared.NameTypePair{
 			Name: ci.Name,
-			Type: fmt.Sprintf("*%s", plugin.ManifestType),
+			Type: fmt.Sprintf("%s", configPlugins[ci.Name].ManifestType),
 		}
 	}
 	if ci.GetIntValue() != 0 {
@@ -53,7 +52,7 @@ func configItemToNameTypePair(ci *proto.ConfigItem) *shared.NameTypePair {
 	return nil
 }
 
-func Build(paths infra_shared.Paths, mf *proto.Manifest, repo string) string {
+func Build(paths infra_shared.Paths, mf *proto.Manifest, repo string, configPlugins map[string]*proto.ConfigPluginOutput) string {
 	tmpl := shared.LoadTemplate(paths, "manifest.tmpl")
 	manifestTemplate := ManifestTemplate{}
 
@@ -74,21 +73,20 @@ func Build(paths infra_shared.Paths, mf *proto.Manifest, repo string) string {
 					}
 					item = local
 				}
-				ntp := configItemToNameTypePair(item)
+				ntp := configItemToNameTypePair(item, configPlugins)
 				if ntp == nil {
 					continue
 				}
 				manifestTemplate.Configs = append(manifestTemplate.Configs, *ntp)
 			} else {
-				ntp := configItemToNameTypePair(config)
+				ntp := configItemToNameTypePair(config, configPlugins)
 				if ntp == nil {
 					continue
 				}
 				manifestTemplate.Configs = append(manifestTemplate.Configs, *ntp)
 			}
 			if config.GetPluginValue() != nil {
-				plugin := config.GetPluginValue()
-				for _, importInfo := range plugin.Imports {
+				for _, importInfo := range configPlugins[config.Name].ManifestImports {
 					manifestTemplate.Imports = append(manifestTemplate.Imports, shared.Import{
 						Import:     importInfo,
 						ImportType: shared.ImportTypeLocal,
