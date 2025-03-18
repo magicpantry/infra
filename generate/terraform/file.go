@@ -371,7 +371,9 @@ const jobTemplate = `    step {
         "--region",
         "us-east1",
         "--memory",
-        "4Gi"
+        "4Gi",
+	"--cpu",
+	"4"
       ]
     }`
 
